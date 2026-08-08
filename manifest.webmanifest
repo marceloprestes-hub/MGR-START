@@ -1,0 +1,19 @@
+{
+  "name": "MGR START",
+  "short_name": "MGR START",
+  "description": "Organização Financeira",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3f6fa",
+  "theme_color": "#102f52",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "./mgr-start-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

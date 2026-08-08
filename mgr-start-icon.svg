@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<rect width="512" height="512" rx="108" fill="#102f52"/>
+<circle cx="256" cy="256" r="178" fill="none" stroke="#c6a54a" stroke-width="12"/>
+<text x="256" y="238" text-anchor="middle" font-family="Arial, sans-serif" font-size="104" font-weight="800" fill="#ffffff">MGR</text>
+<text x="256" y="320" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="700" fill="#c6a54a">START</text>
+</svg>
