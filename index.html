@@ -1115,9 +1115,20 @@ $("backupFile").addEventListener("change",event=>importBackup(event.target.files
   }
 }
 
-Store.load();
-fillCategories();
-renderAll();
+async function iniciarMgrStart(){
+  const acessoValido=await validarAcessoMgrStart();
+
+  if(!acessoValido){
+    console.warn("MGR START: acesso sem sessão válida.");
+    return;
+  }
+
+  Store.load();
+  fillCategories();
+  renderAll();
+}
+
+iniciarMgrStart();
 </script>
 
 <script>
