@@ -135,7 +135,7 @@ button{touch-action:manipulation}
 </style>
 </head>
 <body>
-<div class="app">
+<div class="app" id="mgrStartApp" style="display:none;">
   <aside class="sidebar">
     <div class="brand">MGR <span>START</span></div>
     <div class="sub">Organização Financeira</div>
@@ -1126,6 +1126,8 @@ async function iniciarMgrStart(){
   Store.load();
   fillCategories();
   renderAll();
+
+  document.getElementById("mgrStartApp").style.display="";
 }
 
 iniciarMgrStart();
