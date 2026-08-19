@@ -1248,8 +1248,11 @@ $("backupFile").addEventListener("change",event=>importBackup(event.target.files
   }
 }
 
-function iniciarValidacaoAcessoStart(){
-  const email = prompt("Digite o e-mail utilizado para acessar o MGR START:");
+  async function iniciarValidacaoAcessoStart(){
+
+  const email = prompt(
+    "Digite o e-mail utilizado para acessar o MGR START:"
+  );
 
   if(!email) return;
 
@@ -1260,13 +1263,105 @@ function iniciarValidacaoAcessoStart(){
     return;
   }
 
-  localStorage.setItem("mgr_start_email_validacao", emailLimpo);
+  try{
 
-  alert(
-    "E-mail identificado: " +
-    emailLimpo +
-    "\n\nNa próxima etapa enviaremos um novo código de acesso."
-  );
+    const respostaSolicitacao = await fetch(
+      "https://api.mgrplanejamento.com.br/start/solicitar-acesso",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          email:emailLimpo
+        })
+      }
+    );
+
+    const jsonSolicitacao = await respostaSolicitacao.json();
+
+    if(
+      !respostaSolicitacao.ok ||
+      jsonSolicitacao.success === false
+    ){
+      throw new Error(
+        jsonSolicitacao.message ||
+        jsonSolicitacao.error ||
+        "Não foi possível enviar o código de acesso."
+      );
+    }
+
+    const codigo = prompt(
+      "Enviamos um código para " +
+      emailLimpo +
+      ".\n\nDigite o código recebido:"
+    );
+
+    if(!codigo) return;
+
+    const codigoLimpo = codigo.trim();
+
+    const respostaValidacao = await fetch(
+      "https://api.mgrplanejamento.com.br/leads/validar-email",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          email:emailLimpo,
+          codigo:codigoLimpo
+        })
+      }
+    );
+
+    const jsonValidacao = await respostaValidacao.json();
+
+    if(
+      !respostaValidacao.ok ||
+      jsonValidacao.success === false
+    ){
+      throw new Error(
+        jsonValidacao.message ||
+        jsonValidacao.error ||
+        "Não foi possível validar o código."
+      );
+    }
+
+    const dados = jsonValidacao.data || jsonValidacao;
+
+    if(!dados.start_token){
+      throw new Error(
+        "O acesso foi validado, mas o token do MGR START não foi recebido."
+      );
+    }
+
+    localStorage.setItem(
+      "mgr_start_token",
+      dados.start_token
+    );
+
+    localStorage.setItem(
+      "mgr_start_email_validacao",
+      emailLimpo
+    );
+
+    alert("Acesso validado com sucesso.");
+
+    await iniciarMgrStart();
+
+  }catch(erro){
+
+    console.error(
+      "Erro ao validar acesso ao MGR START:",
+      erro
+    );
+
+    alert(
+      erro.message ||
+      "Não foi possível validar seu acesso. Tente novamente."
+    );
+  }
 }
 
 document
