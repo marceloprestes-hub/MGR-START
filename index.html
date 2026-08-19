@@ -305,7 +305,13 @@ button{touch-action:manipulation}
           <option>Cartão de Crédito</option><option>Investimentos</option><option>Outro</option>
         </select>
       </div>
-      <div class="full"><label>Saldo inicial</label><input id="contaSaldo" type="number" step="0.01"></div>
+      <div class="full">
+  <label>Saldo atual da conta</label>
+  <input id="contaSaldo" type="number" step="0.01" placeholder="Ex.: 2500 ou -2500">
+  <div class="muted" style="margin-top:5px">
+    Informe o saldo como ele está hoje. Se a conta estiver no vermelho, utilize um valor negativo.
+  </div>
+</div>
     </div>
     <div class="actions">
       <button id="btnCancelarConta" class="btn btn-light">Cancelar</button>
