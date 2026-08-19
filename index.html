@@ -1248,6 +1248,30 @@ $("backupFile").addEventListener("change",event=>importBackup(event.target.files
   }
 }
 
+function iniciarValidacaoAcessoStart(){
+  const email = prompt("Digite o e-mail utilizado para acessar o MGR START:");
+
+  if(!email) return;
+
+  const emailLimpo = email.trim().toLowerCase();
+
+  if(!emailLimpo || !emailLimpo.includes("@")){
+    alert("Informe um e-mail válido.");
+    return;
+  }
+
+  localStorage.setItem("mgr_start_email_validacao", emailLimpo);
+
+  alert(
+    "E-mail identificado: " +
+    emailLimpo +
+    "\n\nNa próxima etapa enviaremos um novo código de acesso."
+  );
+}
+
+document
+  .getElementById("btnValidarAcessoStart")
+  ?.addEventListener("click", iniciarValidacaoAcessoStart);  
 async function iniciarMgrStart(){
   const acessoValido=await validarAcessoMgrStart();
 
