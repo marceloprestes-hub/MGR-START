@@ -135,8 +135,109 @@ button{touch-action:manipulation}
 </style>
 </head>
 <body>
+
+  <body>
+
+<div id="mgrStartAcesso" style="
+  min-height:100vh;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:#f3f5f8;
+  font-family:Arial,Helvetica,sans-serif;
+">
+
+  <div style="
+    width:100%;
+    max-width:520px;
+    background:#ffffff;
+    border-radius:22px;
+    overflow:hidden;
+    box-shadow:0 18px 55px rgba(15,23,42,.12);
+  ">
+
+    <div style="
+      background:#12395f;
+      padding:38px 32px;
+      text-align:center;
+    ">
+      <div style="
+        color:#ffffff;
+        font-size:30px;
+        font-weight:800;
+        letter-spacing:.5px;
+      ">
+        MGR <span style="color:#d4ad4f;">START</span>
+      </div>
+
+      <div style="
+        margin-top:8px;
+        color:#d4ad4f;
+        font-size:11px;
+        font-weight:700;
+        letter-spacing:2px;
+      ">
+        MÉTODO MGR | ORGANIZAÇÃO FINANCEIRA
+      </div>
+    </div>
+
+    <div style="padding:42px 38px;text-align:center;">
+
+      <div style="
+        color:#b38a3e;
+        font-size:12px;
+        font-weight:800;
+        letter-spacing:1.5px;
+        margin-bottom:14px;
+      ">
+        ACESSO PROTEGIDO
+      </div>
+
+      <h1 style="
+        margin:0 0 18px;
+        color:#172033;
+        font-size:27px;
+      ">
+        Seu MGR START está protegido
+      </h1>
+
+      <p style="
+        margin:0;
+        color:#64748b;
+        font-size:16px;
+        line-height:1.7;
+      ">
+        Para acessar suas informações financeiras, é necessário possuir uma sessão válida do MGR START.
+      </p>
+
+      <div style="
+        margin-top:30px;
+        padding:18px;
+        background:#f8f6ef;
+        border:1px solid #eadcb9;
+        border-radius:14px;
+        color:#66552f;
+        font-size:14px;
+        line-height:1.6;
+      ">
+        Seus dados armazenados neste dispositivo não foram apagados.
+      </div>
+
+      <div style="
+        margin-top:32px;
+        font-size:13px;
+        color:#94a3b8;
+      ">
+        MGR START • Método MGR
+      </div>
+
+    </div>
+
+  </div>
+</div>
 <div class="app" id="mgrStartApp" style="display:none;">
-  <aside class="sidebar">
+    <aside class="sidebar">
     <div class="brand">MGR <span>START</span></div>
     <div class="sub">Organização Financeira</div>
     <div class="nav">
@@ -1120,8 +1221,14 @@ async function iniciarMgrStart(){
 
   if(!acessoValido){
     console.warn("MGR START: acesso sem sessão válida.");
+
+    document.getElementById("mgrStartAcesso").style.display="flex";
+    document.getElementById("mgrStartApp").style.display="none";
+
     return;
   }
+
+  document.getElementById("mgrStartAcesso").style.display="none";
 
   Store.load();
   fillCategories();
