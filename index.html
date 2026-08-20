@@ -1275,8 +1275,44 @@ $("backupFile").addEventListener("change",event=>importBackup(event.target.files
     console.error("Erro no teste de contas D1:", e);
   }
 }
-  testarContasD1Start();
 
+  async function testarGravacaoContaD1Start(){
+  const token = localStorage.getItem("mgr_start_token");
+
+  if(!token){
+    console.warn("MGR START: token não encontrado.");
+    return;
+  }
+
+  try{
+    const resp = await fetch(
+      "https://api.mgrplanejamento.com.br/start/contas",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({
+          uuid: "TESTE-CONTA-D1-001",
+          nome: "Conta Teste D1",
+          tipo: "Teste",
+          saldo: -150.75
+        })
+      }
+    );
+
+    const json = await resp.json();
+
+    console.log("TESTE GRAVAÇÃO CONTA D1:", json);
+
+  }catch(e){
+    console.error("Erro no teste de gravação da conta D1:", e);
+  }
+}
+
+testarGravacaoContaD1Start();
+  
   async function iniciarValidacaoAcessoStart(){
 
   const email = prompt(
