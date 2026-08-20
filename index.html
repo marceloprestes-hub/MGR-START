@@ -1248,6 +1248,35 @@ $("backupFile").addEventListener("change",event=>importBackup(event.target.files
   }
 }
 
+  async function testarContasD1Start(){
+  const token = localStorage.getItem("mgr_start_token");
+
+  if(!token){
+    console.warn("MGR START: token não encontrado.");
+    return;
+  }
+
+  try{
+    const resp = await fetch(
+      "https://api.mgrplanejamento.com.br/start/contas",
+      {
+        method: "GET",
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      }
+    );
+
+    const json = await resp.json();
+
+    console.log("TESTE CONTAS D1:", json);
+
+  }catch(e){
+    console.error("Erro no teste de contas D1:", e);
+  }
+}
+  testarContasD1Start();
+
   async function iniciarValidacaoAcessoStart(){
 
   const email = prompt(
