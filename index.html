@@ -1306,6 +1306,12 @@ $("backupFile").addEventListener("change",event=>importBackup(event.target.files
 
     console.log("TESTE GRAVAÇÃO CONTA D1:", json);
 
+    alert(
+  "TESTE D1:\n" +
+  "HTTP: " + resp.status + "\n\n" +
+  JSON.stringify(json, null, 2)
+);
+
   }catch(e){
     console.error("Erro no teste de gravação da conta D1:", e);
   }
