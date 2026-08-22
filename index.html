@@ -654,22 +654,80 @@ function closeAccount(){
   $("contaModal").classList.remove("open");
   editingAccountId=null;
 }
-function saveAccount(){
+async function saveAccount(){
   const name=$("contaNome").value.trim();
-  if(!name){alert("Informe o nome da conta.");return}
+
+  if(!name){
+    alert("Informe o nome da conta.");
+    return;
+  }
+
   const account={
     id:editingAccountId||uid("acc"),
     name,
     type:$("contaTipo").value,
     initial:Number($("contaSaldo").value||0)
   };
+
   if(editingAccountId){
-    const index=Store.data.accounts.findIndex(a=>a.id===editingAccountId);
-    if(index>=0)Store.data.accounts[index]=account;
+    const index=Store.data.accounts.findIndex(
+      a=>a.id===editingAccountId
+    );
+
+    if(index>=0){
+      Store.data.accounts[index]=account;
+    }
   }else{
     Store.data.accounts.push(account);
   }
+
+  /*
+   * Primeiro preservamos o funcionamento atual.
+   */
   Store.save();
+
+  /*
+   * Depois tentamos sincronizar a conta com o D1.
+   * Se houver falha, a conta continua salva localmente.
+   */
+  try{
+    const token=localStorage.getItem("mgr_start_token");
+
+    if(token){
+      const resp=await fetch(
+        "https://api.mgrplanejamento.com.br/start/contas",
+        {
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json",
+            "Authorization":"Bearer "+token
+          },
+          body:JSON.stringify({
+            uuid:account.id,
+            nome:account.name,
+            tipo:account.type,
+            saldo:account.initial
+          })
+        }
+      );
+
+      const json=await resp.json();
+
+      if(!resp.ok || json.success===false){
+        console.error(
+          "MGR START: conta salva localmente, mas não sincronizada com D1.",
+          json
+        );
+      }
+    }
+
+  }catch(e){
+    console.error(
+      "MGR START: erro ao sincronizar conta com D1.",
+      e
+    );
+  }
+
   closeAccount();
   renderAll();
 }
