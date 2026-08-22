@@ -1329,10 +1329,17 @@ $("backupFile").addEventListener("change",event=>importBackup(event.target.files
 
     console.log("TESTE CONTAS D1:", json);
 
+    alert(
+  "CONTAS NO D1:\n" +
+  "HTTP: " + resp.status + "\n\n" +
+  JSON.stringify(json, null, 2)
+);
+
   }catch(e){
     console.error("Erro no teste de contas D1:", e);
   }
 }
+  testarContasD1Start();
 
   async function testarGravacaoContaD1Start(){
   const token = localStorage.getItem("mgr_start_token");
