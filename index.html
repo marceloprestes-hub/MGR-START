@@ -1315,6 +1315,23 @@ $("backupFile").addEventListener("change",event=>importBackup(event.target.files
   }
 
   try{
+
+    const respSessao = await fetch(
+  "https://api.mgrplanejamento.com.br/start/sessao",
+  {
+    method: "GET",
+    headers: {
+      "Authorization": "Bearer " + token
+    }
+  }
+);
+
+const jsonSessao = await respSessao.json();
+
+alert(
+  "SESSÃO START:\n\n" +
+  JSON.stringify(jsonSessao, null, 2)
+);
     const resp = await fetch(
       "https://api.mgrplanejamento.com.br/start/contas",
       {
