@@ -1519,6 +1519,45 @@ alert(
 document
   .getElementById("btnValidarAcessoStart")
   ?.addEventListener("click", iniciarValidacaoAcessoStart);  
+
+async function carregarContasD1Start(){
+  const token = localStorage.getItem("mgr_start_token");
+
+  if(!token){
+    console.warn("MGR START: token não encontrado para carregar contas.");
+    return [];
+  }
+
+  try{
+    const resp = await fetch(
+      "https://api.mgrplanejamento.com.br/start/contas",
+      {
+        method: "GET",
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      }
+    );
+
+    const json = await resp.json();
+
+    if(!resp.ok || !json.success){
+      console.error("MGR START: erro ao carregar contas do D1.", json);
+      return [];
+    }
+
+    const contas = json.data?.contas || [];
+
+    console.log("MGR START: contas carregadas do D1:", contas);
+
+    return contas;
+
+  }catch(e){
+    console.error("MGR START: falha ao carregar contas do D1.", e);
+    return [];
+  }
+}
+  
 async function iniciarMgrStart(){
   const acessoValido=await validarAcessoMgrStart();
 
@@ -1532,10 +1571,14 @@ async function iniciarMgrStart(){
   }
 
   document.getElementById("mgrStartAcesso").style.display="none";
+  
+Store.load();
 
-  Store.load();
-  fillCategories();
-  renderAll();
+const contasD1 = await carregarContasD1Start();
+console.log("CONTAS RECUPERADAS DO D1:", contasD1);
+
+fillCategories();
+renderAll();
 
   document.getElementById("mgrStartApp").style.display="";
 }
