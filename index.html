@@ -578,12 +578,25 @@ function closeMovement(){
   $("movModal").classList.remove("open");
   editingMovementId=null;
 }
-function saveMovement(){
+async function saveMovement(){
   const date=$("movData").value;
   const value=Number($("movValor").value);
-  if(!date){alert("Informe a data.");return}
-  if(!Number.isFinite(value)||value<=0){alert("Informe um valor maior que zero.");return}
-  const previousMovement=editingMovementId?Store.data.movements.find(m=>m.id===editingMovementId):null;
+
+  if(!date){
+    alert("Informe a data.");
+    return;
+  }
+
+  if(!Number.isFinite(value)||value<=0){
+    alert("Informe um valor maior que zero.");
+    return;
+  }
+
+  const previousMovement=
+    editingMovementId
+      ? Store.data.movements.find(m=>m.id===editingMovementId)
+      : null;
+
   const item={
     id:editingMovementId||uid("mov"),
     date,
@@ -597,17 +610,81 @@ function saveMovement(){
     recurringMarker:previousMovement?.recurringMarker,
     recurringVariable:previousMovement?.recurringVariable||false
   };
+
   if(editingMovementId){
-    const index=Store.data.movements.findIndex(m=>m.id===editingMovementId);
-    if(index>=0)Store.data.movements[index]=item;
+    const index=
+      Store.data.movements.findIndex(
+        m=>m.id===editingMovementId
+      );
+
+    if(index>=0){
+      Store.data.movements[index]=item;
+    }
+
   }else{
     Store.data.movements.push(item);
   }
+
+  /*
+   * Primeiro preservamos o funcionamento atual.
+   */
   Store.save();
+
+  /*
+   * Depois sincronizamos a movimentação com o D1.
+   */
+  try{
+    const token=
+      localStorage.getItem("mgr_start_token");
+
+    if(token){
+      const resp=await fetch(
+        "https://api.mgrplanejamento.com.br/start/movimentacoes",
+        {
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json",
+            "Authorization":"Bearer "+token
+          },
+          body:JSON.stringify({
+            uuid:item.id,
+            conta_uuid:item.accountId,
+            data:item.date,
+            tipo:item.type,
+            categoria:item.category,
+            subcategoria:item.subcategory,
+            descricao:item.description,
+            valor:item.value,
+            status:item.status
+          })
+        }
+      );
+
+      const json=await resp.json();
+
+      if(!resp.ok || json.success===false){
+        console.error(
+          "MGR START: movimentação salva localmente, mas não sincronizada com D1.",
+          json
+        );
+      }else{
+        console.log(
+          "MGR START: movimentação sincronizada com D1.",
+          json
+        );
+      }
+    }
+
+  }catch(e){
+    console.error(
+      "MGR START: erro ao sincronizar movimentação com D1.",
+      e
+    );
+  }
+
   closeMovement();
   renderAll();
 }
-
 function confirmMovement(id){
   const m=Store.data.movements.find(x=>x.id===id);
   if(!m)return;
@@ -1676,8 +1753,7 @@ async function iniciarMgrStart(){
 
   document.getElementById("mgrStartAcesso").style.display="none";
 
-  await testarGravacaoMovimentacaoD1Start();
-  
+    
 Store.load();
 
 const contasD1 = await carregarContasD1Start();
