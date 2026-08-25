@@ -703,11 +703,59 @@ function confirmMovement(id){
   Store.save();
   renderAll();
 }
-function deleteMovement(id){
+
+  async function deleteMovement(id){
   if(!confirm("Excluir esta movimentação?"))return;
-  Store.data.movements=Store.data.movements.filter(m=>m.id!==id);
+
+  /*
+   * Primeiro preservamos o funcionamento local atual.
+   */
+  Store.data.movements=
+    Store.data.movements.filter(m=>m.id!==id);
+
   Store.save();
   renderAll();
+
+  /*
+   * Depois sincronizamos a exclusão com o D1.
+   */
+  try{
+    const token=
+      localStorage.getItem("mgr_start_token");
+
+    if(token){
+      const resp=await fetch(
+        "https://api.mgrplanejamento.com.br/start/movimentacoes/" +
+        encodeURIComponent(id),
+        {
+          method:"DELETE",
+          headers:{
+            "Authorization":"Bearer "+token
+          }
+        }
+      );
+
+      const json=await resp.json();
+
+      if(!resp.ok || json.success===false){
+        console.error(
+          "MGR START: movimentação excluída localmente, mas não sincronizada com D1.",
+          json
+        );
+      }else{
+        console.log(
+          "MGR START: exclusão da movimentação sincronizada com D1.",
+          json
+        );
+      }
+    }
+
+  }catch(e){
+    console.error(
+      "MGR START: erro ao sincronizar exclusão da movimentação com D1.",
+      e
+    );
+  }
 }
 
 function openAccount(id=null){
