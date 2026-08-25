@@ -1575,7 +1575,23 @@ async function iniciarMgrStart(){
 Store.load();
 
 const contasD1 = await carregarContasD1Start();
-console.log("CONTAS RECUPERADAS DO D1:", contasD1);
+
+if(contasD1.length > 0){
+
+  Store.data.accounts = contasD1.map(conta => ({
+    id: conta.uuid,
+    name: conta.nome,
+    type: conta.tipo,
+    initial: Number(conta.saldo || 0)
+  }));
+
+  Store.save();
+
+  console.log(
+    "MGR START: contas do D1 integradas ao Store:",
+    Store.data.accounts
+  );
+}
 
 fillCategories();
 renderAll();
