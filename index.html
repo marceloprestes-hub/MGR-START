@@ -1438,51 +1438,7 @@ $("backupFile").addEventListener("change",event=>importBackup(event.target.files
     console.error("Erro ao validar acesso ao MGR START:",e);
     return false;
   }
-}
-
- 
-  async function testarGravacaoContaD1Start(){
-  const token = localStorage.getItem("mgr_start_token");
-
-  if(!token){
-    console.warn("MGR START: token não encontrado.");
-    return;
-  }
-
-  try{
-    const resp = await fetch(
-      "https://api.mgrplanejamento.com.br/start/contas",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
-        },
-        body: JSON.stringify({
-          uuid: "TESTE-CONTA-D1-001",
-          nome: "Conta Teste D1",
-          tipo: "Teste",
-          saldo: -150.75
-        })
-      }
-    );
-
-    const json = await resp.json();
-
-    console.log("TESTE GRAVAÇÃO CONTA D1:", json);
-
-    alert(
-  "TESTE D1:\n" +
-  "HTTP: " + resp.status + "\n\n" +
-  JSON.stringify(json, null, 2)
-);
-
-  }catch(e){
-    console.error("Erro no teste de gravação da conta D1:", e);
-  }
-}
-
-  
+} 
   async function iniciarValidacaoAcessoStart(){
 
   const email = prompt(
