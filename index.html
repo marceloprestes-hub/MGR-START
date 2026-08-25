@@ -1614,6 +1614,53 @@ async function carregarContasD1Start(){
     return [];
   }
 }
+
+async function testarGravacaoMovimentacaoD1Start(){
+  const token = localStorage.getItem("mgr_start_token");
+
+  if(!token){
+    console.warn("MGR START: token não encontrado.");
+    return;
+  }
+
+  try{
+    const resp = await fetch(
+      "https://api.mgrplanejamento.com.br/start/movimentacoes",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({
+          uuid: "TESTE-MOV-D1-001",
+          conta_uuid: "TESTE-CONTA-D1-001",
+          data: "2026-08-25",
+          tipo: "Despesa",
+          categoria: "Outros",
+          subcategoria: "Teste",
+          descricao: "Teste integração movimentações D1",
+          valor: 49.90,
+          status: "Realizado"
+        })
+      }
+    );
+
+    const json = await resp.json();
+
+    alert(
+      "TESTE MOVIMENTAÇÃO D1:\n" +
+      "HTTP: " + resp.status + "\n\n" +
+      JSON.stringify(json, null, 2)
+    );
+
+  }catch(e){
+    console.error(
+      "Erro no teste de gravação da movimentação D1:",
+      e
+    );
+  }
+}  
   
 async function iniciarMgrStart(){
   const acessoValido=await validarAcessoMgrStart();
@@ -1628,6 +1675,8 @@ async function iniciarMgrStart(){
   }
 
   document.getElementById("mgrStartAcesso").style.display="none";
+
+  await testarGravacaoMovimentacaoD1Start();
   
 Store.load();
 
