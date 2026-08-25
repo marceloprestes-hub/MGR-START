@@ -731,26 +731,83 @@ async function saveAccount(){
   closeAccount();
   renderAll();
 }
-function deleteAccount(id){
+
+async function deleteAccount(id){
   if(Store.data.accounts.length===1){
     alert("É necessário manter pelo menos uma conta.");
     return;
   }
+
   const account=Store.data.accounts.find(a=>a.id===id);
+
+  if(!account){
+    alert("Conta não encontrada.");
+    return;
+  }
+
   const linked=Store.data.movements.filter(m=>m.accountId===id);
+
   if(linked.length){
     const destination=Store.data.accounts.find(a=>a.id!==id);
-    const ok=confirm(`A conta "${account.name}" possui ${linked.length} movimentação(ões). Elas serão transferidas para "${destination.name}". Deseja continuar?`);
+
+    const ok=confirm(
+      `A conta "${account.name}" possui ${linked.length} movimentação(ões). ` +
+      `Elas serão transferidas para "${destination.name}". Deseja continuar?`
+    );
+
     if(!ok)return;
+
     linked.forEach(m=>m.accountId=destination.id);
+
   }else{
     if(!confirm(`Excluir a conta "${account.name}"?`))return;
   }
-  Store.data.accounts=Store.data.accounts.filter(a=>a.id!==id);
+
+  /*
+   * Mantemos primeiro o comportamento local atual.
+   */
+  Store.data.accounts=
+    Store.data.accounts.filter(a=>a.id!==id);
+
   Store.save();
   renderAll();
-}
 
+  /*
+   * Depois sincronizamos a exclusão com o D1.
+   */
+  try{
+    const token=localStorage.getItem("mgr_start_token");
+
+    if(token){
+      const resp=await fetch(
+        "https://api.mgrplanejamento.com.br/start/contas/" +
+        encodeURIComponent(id),
+        {
+          method:"DELETE",
+          headers:{
+            "Authorization":"Bearer "+token
+          }
+        }
+      );
+
+      const json=await resp.json();
+
+      if(!resp.ok || json.success===false){
+        console.error(
+          "MGR START: conta excluída localmente, mas não sincronizada com D1.",
+          json
+        );
+      }
+    }
+
+  }catch(e){
+    console.error(
+      "MGR START: erro ao sincronizar exclusão da conta com D1.",
+      e
+    );
+  }
+}
+  
 function years(){
   const set=new Set([new Date().getFullYear()]);
   Store.data.movements.forEach(m=>{if(m.date)set.add(Number(m.date.slice(0,4)))});
