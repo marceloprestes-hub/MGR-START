@@ -1663,6 +1663,10 @@ async function iniciarMgrStart(){
 
 Store.load();
 
+/*
+ * CONTAS
+ * Carrega as contas já sincronizadas com o D1.
+ */
 const contasD1 = await carregarContasD1Start();
 
 if(contasD1.length > 0){
@@ -1674,13 +1678,58 @@ if(contasD1.length > 0){
     initial: Number(conta.saldo || 0)
   }));
 
-  Store.save();
-
   console.log(
     "MGR START: contas do D1 integradas ao Store:",
     Store.data.accounts
   );
 }
+
+/*
+ * MOVIMENTAÇÕES
+ * Carrega o D1 sem apagar o histórico local.
+ */
+const movimentacoesD1 =
+  await carregarMovimentacoesD1Start();
+
+if(movimentacoesD1.length > 0){
+
+  movimentacoesD1.forEach(mov => {
+
+    const jaExiste =
+      Store.data.movements.some(
+        local => local.id === mov.uuid
+      );
+
+    if(!jaExiste){
+
+      Store.data.movements.push({
+        id: mov.uuid,
+        date: mov.data,
+        type: mov.tipo,
+        accountId: mov.conta_uuid,
+        category: mov.categoria || "",
+        subcategory: mov.subcategoria || "",
+        description: mov.descricao || "",
+        value: Number(mov.valor || 0),
+        status: mov.status || "Realizado",
+        recurringMarker: undefined,
+        recurringVariable: false
+      });
+
+    }
+
+  });
+
+  console.log(
+    "MGR START: movimentações do D1 integradas ao Store:",
+    movimentacoesD1.length
+  );
+}
+
+/*
+ * Somente depois da mesclagem salvamos o Store.
+ */
+Store.save();
 
 fillCategories();
 renderAll();
