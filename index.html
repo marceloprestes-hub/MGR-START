@@ -1692,59 +1692,14 @@ async function carregarContasD1Start(){
   }
 }
 
-async function testarGravacaoMovimentacaoD1Start(){
+async function carregarMovimentacoesD1Start(){
   const token = localStorage.getItem("mgr_start_token");
 
   if(!token){
-    console.warn("MGR START: token não encontrado.");
-    return;
-  }
-
-  try{
-    const resp = await fetch(
-      "https://api.mgrplanejamento.com.br/start/movimentacoes",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer " + token
-        },
-        body: JSON.stringify({
-          uuid: "TESTE-MOV-D1-001",
-          conta_uuid: "TESTE-CONTA-D1-001",
-          data: "2026-08-25",
-          tipo: "Despesa",
-          categoria: "Outros",
-          subcategoria: "Teste",
-          descricao: "Teste integração movimentações D1",
-          valor: 49.90,
-          status: "Realizado"
-        })
-      }
+    console.warn(
+      "MGR START: token não encontrado para carregar movimentações."
     );
-
-    const json = await resp.json();
-
-    alert(
-      "TESTE MOVIMENTAÇÃO D1:\n" +
-      "HTTP: " + resp.status + "\n\n" +
-      JSON.stringify(json, null, 2)
-    );
-
-  }catch(e){
-    console.error(
-      "Erro no teste de gravação da movimentação D1:",
-      e
-    );
-  }
-}  
-
-async function testarLeituraMovimentacoesD1Start(){
-  const token = localStorage.getItem("mgr_start_token");
-
-  if(!token){
-    console.warn("MGR START: token não encontrado.");
-    return;
+    return [];
   }
 
   try{
@@ -1760,20 +1715,33 @@ async function testarLeituraMovimentacoesD1Start(){
 
     const json = await resp.json();
 
-    alert(
-      "MOVIMENTAÇÕES NO D1:\n" +
-      "HTTP: " + resp.status + "\n\n" +
-      JSON.stringify(json, null, 2)
+    if(!resp.ok || !json.success){
+      console.error(
+        "MGR START: erro ao carregar movimentações do D1.",
+        json
+      );
+      return [];
+    }
+
+    const movimentacoes = json.data?.movimentacoes || [];
+
+    console.log(
+      "MGR START: movimentações carregadas do D1:",
+      movimentacoes
     );
+
+    return movimentacoes;
 
   }catch(e){
     console.error(
-      "Erro no teste de leitura das movimentações D1:",
+      "MGR START: falha ao carregar movimentações do D1.",
       e
     );
+
+    return [];
   }
 }  
-  
+ 
 async function iniciarMgrStart(){
   const acessoValido=await validarAcessoMgrStart();
 
@@ -1788,7 +1756,6 @@ async function iniciarMgrStart(){
 
   document.getElementById("mgrStartAcesso").style.display="none";
 
-    await testarLeituraMovimentacoesD1Start();
 Store.load();
 
 const contasD1 = await carregarContasD1Start();
