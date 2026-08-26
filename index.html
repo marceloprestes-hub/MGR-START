@@ -1694,6 +1694,107 @@ async function carregarMovimentacoesD1Start(){
     return [];
   }
 }  
+
+  async function migrarMovimentacoesLocaisParaD1Start(){
+  const token = localStorage.getItem("mgr_start_token");
+
+  if(!token){
+    console.warn(
+      "MGR START: token não encontrado para migração."
+    );
+    return;
+  }
+
+  const movimentacoes =
+    Array.isArray(Store.data.movements)
+      ? Store.data.movements
+      : [];
+
+  if(movimentacoes.length === 0){
+    console.log(
+      "MGR START: nenhuma movimentação local para migrar."
+    );
+    return;
+  }
+
+  console.log(
+    "MGR START: iniciando migração de",
+    movimentacoes.length,
+    "movimentações."
+  );
+
+  let sucesso = 0;
+  let erros = 0;
+
+  for(const item of movimentacoes){
+
+    try{
+
+      if(!item.id || !item.accountId || !item.date || !item.type){
+        console.warn(
+          "MGR START: movimentação ignorada por dados incompletos:",
+          item
+        );
+
+        erros++;
+        continue;
+      }
+
+      const resp = await fetch(
+        "https://api.mgrplanejamento.com.br/start/movimentacoes",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + token
+          },
+          body: JSON.stringify({
+            uuid: item.id,
+            conta_uuid: item.accountId,
+            data: item.date,
+            tipo: item.type,
+            categoria: item.category || "",
+            subcategoria: item.subcategory || "",
+            descricao: item.description || "",
+            valor: Number(item.value || 0),
+            status: item.status || "Realizado"
+          })
+        }
+      );
+
+      const json = await resp.json();
+
+      if(resp.ok && json.success){
+        sucesso++;
+      }else{
+        erros++;
+
+        console.error(
+          "MGR START: falha ao migrar movimentação:",
+          item.id,
+          json
+        );
+      }
+
+    }catch(e){
+
+      erros++;
+
+      console.error(
+        "MGR START: erro durante migração:",
+        item.id,
+        e
+      );
+    }
+  }
+
+  alert(
+    "MIGRAÇÃO MGR START CONCLUÍDA\n\n" +
+    "Movimentações locais: " + movimentacoes.length + "\n" +
+    "Sincronizadas: " + sucesso + "\n" +
+    "Erros: " + erros
+  );
+}
  
 async function iniciarMgrStart(){
   const acessoValido=await validarAcessoMgrStart();
@@ -1711,10 +1812,14 @@ async function iniciarMgrStart(){
 
 Store.load();
 
+  await migrarMovimentacoesLocaisParaD1Start();
+
 /*
  * CONTAS
  * Carrega as contas já sincronizadas com o D1.
  */
+
+  
 const contasD1 = await carregarContasD1Start();
 
 if(contasD1.length > 0){
