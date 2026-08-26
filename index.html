@@ -400,10 +400,11 @@ button{touch-action:manipulation}
           <button id="btnExportar" class="btn btn-light">Exportar backup</button>
           <button id="btnImportar" class="btn btn-light">Importar backup</button>
           <input id="backupFile" type="file" accept="*/*" style="display:none">
-          <button
+<button
   id="btnMigrarMovimentacoesD1"
   class="btn btn-light"
-  type="button">
+  type="button"
+  data-migrar-d1="1">
   Sincronizar dados com D1
 </button>
           <button id="btnSalvarConfig" class="btn btn-primary">Salvar</button>
@@ -1415,6 +1416,7 @@ document.addEventListener("click",event=>{
   const deleteAccountId=event.target.dataset.deleteAccount;
   const editRec=event.target.dataset.editRec;
   const deleteRec=event.target.dataset.deleteRec;
+  const migrarD1=event.target.dataset.migrarD1;
 
   if(editMov)openMovement(editMov);
   if(deleteMov)deleteMovement(deleteMov);
@@ -1424,6 +1426,7 @@ document.addEventListener("click",event=>{
   if(editRec)openRecurring(editRec);
   if(deleteRec)deleteRecurring(deleteRec);
 });
+  if(migrarD1)migrarMovimentacoesLocaisParaD1Start();
 
 $("btnNovaMov").addEventListener("click",()=>openMovement());
 $("btnAddMov").addEventListener("click",()=>openMovement());
