@@ -1416,7 +1416,7 @@ document.addEventListener("click",event=>{
   const deleteAccountId=event.target.dataset.deleteAccount;
   const editRec=event.target.dataset.editRec;
   const deleteRec=event.target.dataset.deleteRec;
-  const migrarD1=event.target.dataset.migrarD1;
+  
 
   if(editMov)openMovement(editMov);
   if(deleteMov)deleteMovement(deleteMov);
@@ -1426,8 +1426,7 @@ document.addEventListener("click",event=>{
   if(editRec)openRecurring(editRec);
   if(deleteRec)deleteRecurring(deleteRec);
 });
-  if(migrarD1)migrarMovimentacoesLocaisParaD1Start();
-
+ 
 $("btnNovaMov").addEventListener("click",()=>openMovement());
 $("btnAddMov").addEventListener("click",()=>openMovement());
 $("btnSalvarMov").addEventListener("click",saveMovement);
