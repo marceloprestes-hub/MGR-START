@@ -404,7 +404,6 @@ button{touch-action:manipulation}
   id="btnMigrarMovimentacoesD1"
   class="btn btn-light"
   type="button"
-  onclick="migrarMovimentacoesLocaisParaD1Start()">
   Sincronizar dados com D1
 </button>
           <button id="btnSalvarConfig" class="btn btn-primary">Salvar</button>
@@ -1458,6 +1457,9 @@ $("recCategoria").addEventListener("change",()=>fillRecurringSubcategories());
 
 $("btnSalvarOrc").addEventListener("click",saveBudget);
 $("btnSalvarConfig").addEventListener("click",saveConfig);
+$("btnMigrarMovimentacoesD1").addEventListener("click", async () => {
+  await migrarMovimentacoesLocaisParaD1Start();
+});  
 $("btnExportar").addEventListener("click",exportBackup);
 $("btnImportar").addEventListener("click",()=>$("backupFile").click());
 $("backupFile").addEventListener("change",event=>importBackup(event.target.files[0]));
