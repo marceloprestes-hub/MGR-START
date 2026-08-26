@@ -1456,7 +1456,9 @@ $("recCategoria").addEventListener("change",()=>fillRecurringSubcategories());
 
 $("btnSalvarOrc").addEventListener("click",saveBudget);
 $("btnSalvarConfig").addEventListener("click",saveConfig);
-$("btnMigrarMovimentacoesD1").addEventListener("click",migrarMovimentacoesLocaisParaD1Start);  
+$("btnMigrarMovimentacoesD1").addEventListener("click", async () => {
+  await migrarMovimentacoesLocaisParaD1Start();
+}); 
 $("btnExportar").addEventListener("click",exportBackup);
 $("btnImportar").addEventListener("click",()=>$("backupFile").click());
 $("backupFile").addEventListener("change",event=>importBackup(event.target.files[0]));
