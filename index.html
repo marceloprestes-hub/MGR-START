@@ -2344,36 +2344,23 @@ const movimentacoesD1 =
 
 if(movimentacoesD1.length > 0){
 
-  movimentacoesD1.forEach(mov => {
-
-    const jaExiste =
-      Store.data.movements.some(
-        local => local.id === mov.uuid
-      );
-
-    if(!jaExiste){
-
-      Store.data.movements.push({
-        id: mov.uuid,
-        date: mov.data,
-        type: mov.tipo,
-        accountId: mov.conta_uuid,
-        category: mov.categoria || "",
-        subcategory: mov.subcategoria || "",
-        description: mov.descricao || "",
-        value: Number(mov.valor || 0),
-        status: mov.status || "Realizado",
-        recurringMarker: undefined,
-        recurringVariable: false
-      });
-
-    }
-
-  });
+  Store.data.movements = movimentacoesD1.map(mov => ({
+    id: mov.uuid,
+    date: mov.data,
+    type: mov.tipo,
+    accountId: mov.conta_uuid,
+    category: mov.categoria || "",
+    subcategory: mov.subcategoria || "",
+    description: mov.descricao || "",
+    value: Number(mov.valor || 0),
+    status: mov.status || "Realizado",
+    recurringMarker: undefined,
+    recurringVariable: false
+  }));
 
   console.log(
-    "MGR START: movimentações do D1 integradas ao Store:",
-    movimentacoesD1.length
+    "MGR START: movimentações atualizadas a partir do D1:",
+    Store.data.movements.length
   );
 }
 
