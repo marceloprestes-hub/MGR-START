@@ -1724,6 +1724,22 @@ importarSessaoDaLanding();
 
     alert("Acesso validado com sucesso.");
 
+    const limparSessaoStart = new URLSearchParams(
+  window.location.search
+).get("limpar_sessao");
+
+if(limparSessaoStart === "1"){
+  localStorage.removeItem("mgr_start_token");
+  localStorage.removeItem("mgr_start_token_expira_em");
+
+  alert(
+    "Sessão do MGR START removida.\n\n" +
+    "Seus dados financeiros locais foram preservados."
+  );
+
+  window.location.href = window.location.pathname;
+}
+
     await iniciarMgrStart();
 
   }catch(erro){
