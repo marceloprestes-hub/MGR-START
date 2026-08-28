@@ -1815,15 +1815,9 @@ async function carregarMovimentacoesD1Start(){
 
     const movimentacoes = json.data?.movimentacoes || [];
 
- alert(
-  "DIAGNÓSTICO D1\n\n" +
-  "Usuário identificado pela API: " + (json.data?.usuario_id ?? "não informado") + "\n" +
-  "Total informado pela API: " + (json.data?.total ?? "não informado") + "\n" +
-  "Movimentações recebidas: " + movimentacoes.length + "\n" +
-  "Confiança R$120: " +
-  (movimentacoes.some(
-    m => m.uuid === "mov-1787854622108-26847"
-  ) ? "SIM" : "NÃO")
+alert(
+  "RESPOSTA REAL DA API\n\n" +
+  JSON.stringify(json, null, 2)
 );
 
     console.log(
