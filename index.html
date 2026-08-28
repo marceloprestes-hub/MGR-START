@@ -1815,6 +1815,15 @@ async function carregarMovimentacoesD1Start(){
 
     const movimentacoes = json.data?.movimentacoes || [];
 
+    alert(
+  "DIAGNÓSTICO D1\n\n" +
+  "Movimentações recebidas: " + movimentacoes.length + "\n" +
+  "Confiança R$120: " +
+  (movimentacoes.some(
+    m => m.uuid === "mov-1787854622108-26847"
+  ) ? "SIM" : "NÃO")
+);
+
     console.log(
       "MGR START: movimentações carregadas do D1:",
       movimentacoes
