@@ -1,4 +1,4 @@
-const CACHE = "mgr-start-pwa-v3";
+const CACHE = "mgr-start-pwa-v4";
 
 const APP_SHELL = [
   "./",
