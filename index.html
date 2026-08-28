@@ -1794,7 +1794,7 @@ async function carregarMovimentacoesD1Start(){
 
   try{
     const resp = await fetch(
-      "https://api.mgrplanejamento.com.br/start/movimentacoes",
+     "https://api.mgrplanejamento.com.br/start/movimentacoes?t=" + Date.now(),
       {
         method: "GET",
         headers: {
